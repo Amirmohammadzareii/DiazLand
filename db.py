@@ -143,17 +143,21 @@ GRID_SIZE = 16          # گرید ۱۶×۱۶
 CENTER = (GRID_SIZE - 1) / 2  # مرکز = ۷.۵
 # حداکثر فاصله از مرکز (گوشه‌ها)
 MAX_DIST = (CENTER ** 2 + CENTER ** 2) ** 0.5
+# نزدیک‌ترین قطعه به مرکز (چون گرید زوجه، مرکز دقیقاً روی قطعه نیست)
+MIN_DIST = (0.5 ** 2 + 0.5 ** 2) ** 0.5
+# ضریب نرمال‌سازی: طوری‌که مرکز ≈ ۵۰۰۰ دیاز و حاشیه ≈ ۲۰۰ دیاز
+_PRICE_K = (__import__("math").log(25) / __import__("math").log(1.18)) / (MAX_DIST - MIN_DIST)
 
 
 def land_price(x: int, y: int) -> int:
     """
     قیمت قطعه: مرکز گران‌ترین (≈۵۰۰۰ دیاز)، حاشیه ارزان‌ترین (≈۲۰۰ دیاز).
-    فرمول تسک: price = round(200 * 1.18^distance) — که در آن distance
-    از لبه حساب می‌شود (هرچه به مرکز نزدیک‌تر، distance بیشتر).
+    فرمول تسک: price = round(200 × 1.18^distance) — که در آن distance
+    از لبه به سمت مرکز اندازه‌گیری می‌شود (نزدیک مرکز → گران‌تر).
     """
-    dist_from_center = ((x - CENTER) ** 2 + (y - CENTER) ** 2) ** 0.5
-    # معکوس: نزدیک مرکز → عدد بزرگ‌تر
-    effective = MAX_DIST - dist_from_center
+    import math
+    dist_from_center = math.hypot(x - CENTER, y - CENTER)
+    effective = _PRICE_K * (MAX_DIST - dist_from_center)
     return int(round(200 * (1.18 ** effective)))
 
 
@@ -161,13 +165,20 @@ def seed_lands(conn):
     """ساخت ۲۵۶ قطعه خالی در صورت نبودن (مهاجرت اولیه نقشه)."""
     cur = conn.cursor()
     cur.execute("SELECT COUNT(*) AS c FROM lands")
-    if cur.fetchone()["c"] > 0:
-        return
-    rows = []
-    for x in range(GRID_SIZE):
-        for y in range(GRID_SIZE):
-            rows.append((x, y, land_price(x, y)))
-    cur.executemany("INSERT INTO lands (x, y, price) VALUES (?, ?, ?)", rows)
+    if cur.fetchone()["c"] == 0:
+        rows = []
+        for x in range(GRID_SIZE):
+            for y in range(GRID_SIZE):
+                rows.append((x, y, land_price(x, y)))
+        cur.executemany("INSERT INTO lands (x, y, price) VALUES (?, ?, ?)", rows)
+    else:
+        # به‌روزرسانی قیمت قطعات خالی (اگر فرمول عوض شده باشد)
+        cur.execute("SELECT x, y FROM lands WHERE owner_id IS NULL")
+        for row in cur.fetchall():
+            cur.execute(
+                "UPDATE lands SET price = ? WHERE x = ? AND y = ?",
+                (land_price(row["x"], row["y"]), row["x"], row["y"]),
+            )
 
 
 def now_iso():

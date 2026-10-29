@@ -50,16 +50,39 @@
       <div class="medal {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% else %}plain{% endif %}">
         {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}
       </div>
-      <div class="mini-passport">{% include "_flag.html" %}<span>DZ</span></div>
+      <div class="mini-passport">{% set flag_w = 62 %}{% set flag_h = 40 %}{% include "partials/flag.html" %}<span>DZ</span></div>
       <div class="flex-1">
         <p class="font-bold {% if loop.index <= 3 %}gold{% endif %}">{{ person.display_name }}</p>
         <p class="text-gray-600 text-xs mono">{{ person.national_id }}</p>
       </div>
-      <span class="font-black text-lg">{{ person.balance }} <span class="text-xs text-gray-500">دیاز</span></span>
+      <span class="font-black text-lg"><span class="count-up" data-target="{{ person.balance }}">{{ person.balance }}</span> <span class="text-xs text-gray-500">دیاز</span></span>
     </div>
     {% else %}
     <p class="text-center text-gray-600 py-8">هنوز هیچ شهروندی ثبت‌نام نکرده است.</p>
     {% endfor %}
   </div>
 </div>
+
+<script>
+// count-up اعداد دیاز با IntersectionObserver + rAF
+(function() {
+  const nums = document.querySelectorAll('.count-up');
+  if (!nums.length) return;
+  function animate(el) {
+    const target = parseInt(el.dataset.target) || 0;
+    const dur = 1500, start = performance.now();
+    function step(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target).toLocaleString('fa-IR');
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { animate(e.target); io.unobserve(e.target); } });
+  }, {threshold: 0.5});
+  nums.forEach(n => io.observe(n));
+})();
+</script>
 {% endblock %}

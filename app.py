@@ -26,6 +26,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = FastAPI(title="جمهوری دیازلند", docs_url=None, redoc_url=None)
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
+# سرو فایل‌های استاتیک (پرچم SVG و ...)
+_assets_dir = os.path.join(BASE_DIR, "assets")
+if os.path.isdir(_assets_dir):
+    app.mount("/assets", StaticFiles(directory=_assets_dir), name="assets")
+
 # init دیتابیس در استارتاپ
 db.init_db()
 
@@ -62,8 +67,19 @@ def render(request: Request, template: str, **ctx):
 def landing(request: Request):
     conn = db.get_conn()
     citizen_count = conn.execute("SELECT COUNT(*) AS c FROM users").fetchone()["c"]
+    top3 = conn.execute(
+        """SELECT display_name, national_id, balance
+           FROM users ORDER BY balance DESC, created_at ASC LIMIT 3"""
+    ).fetchall()
+    lands_owned = conn.execute("SELECT COUNT(*) AS c FROM lands WHERE owner_id IS NOT NULL").fetchone()["c"]
     conn.close()
-    return render(request, "landing.html", citizen_count=citizen_count)
+    return render(
+        request,
+        "landing.html",
+        citizen_count=citizen_count,
+        top3=top3,
+        lands_owned=lands_owned,
+    )
 
 
 # ---------- ثبت‌نام ----------
