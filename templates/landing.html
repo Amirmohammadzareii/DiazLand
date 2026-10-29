@@ -23,13 +23,7 @@
     animation: wave 4s ease-in-out infinite;
     transform-origin: right center;
   }
-  .flag-big::before {
-    content: ''; position: absolute; right: 0; top: 0;
-    width: 0; height: 0;
-    border-right: 95px solid #f5c542;
-    border-bottom: 95px solid transparent;
-    filter: drop-shadow(0 0 10px rgba(245,197,66,.6));
-  }
+  .flag-big .dz-flag { width: 100%; height: 100%; display: block; }
   @keyframes wave {
     0%,100% { transform: perspective(400px) rotateY(0deg) skewY(0deg); }
     50% { transform: perspective(400px) rotateY(-6deg) skewY(1.5deg); }
@@ -97,7 +91,7 @@
 
   <div class="hero-content">
     <!-- پرچم موج‌دار -->
-    <div class="flag-big"></div>
+    <div class="flag-big">{% include "_flag.html" %}</div>
 
     <!-- تیتر حرف‌به‌حرف -->
     <h1 class="title" id="title" aria-label="جمهوری دیازلند"></h1>

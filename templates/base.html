@@ -29,6 +29,12 @@
     @keyframes fadeUp { from { opacity:0; transform: translateY(16px);} to {opacity:1; transform:none;} }
     .fade-up { animation: fadeUp .6s ease both; }
     .glow { box-shadow: 0 0 40px rgba(245,197,66,.15); }
+    .nav-flag {
+      display: inline-block; width: 30px; height: 20px; overflow: hidden;
+      border-radius: 3px; border: 1px solid rgba(245,197,66,.4);
+      vertical-align: middle;
+    }
+    .nav-flag .dz-flag { width: 100%; height: 100%; display: block; }
   </style>
 </head>
 <body class="min-h-screen">
@@ -36,7 +42,7 @@
   <nav class="border-b border-gray-800 bg-[#0b0f19]/90 backdrop-blur sticky top-0 z-50">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2 font-bold text-lg">
-        <span class="text-2xl">🇩🇿</span>
+        <span class="nav-flag">{% include "_flag.html" %}</span>
         <span class="gold">دیازلند</span>
       </a>
       <div class="flex items-center gap-3 text-sm">
