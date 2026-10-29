@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}لیدربورد ملی — دیازلند{% endblock %}
+{% block content %}
+<div class="fade-up">
+  <div class="text-center mb-8">
+    <div class="text-5xl mb-2">🏆</div>
+    <h1 class="text-3xl font-black gold">لیدربورد ملی</h1>
+    <p class="text-gray-500 text-sm mt-1">۱۰ شهروند ثروتمند جمهوری دیازلند</p>
+  </div>
+
+  <div class="card overflow-hidden max-w-2xl mx-auto">
+    {% for person in top %}
+    <div class="flex items-center gap-4 px-5 py-4 {% if not loop.last %}border-b border-gray-800{% endif %}
+                {% if loop.index <= 3 %}bg-[#0b0f19]/50{% endif %}">
+      <span class="text-2xl w-8 text-center">
+        {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}
+      </span>
+      <div class="flex-1">
+        <p class="font-bold {% if loop.index <= 3 %}gold{% endif %}">{{ person.display_name }}</p>
+        <p class="text-gray-600 text-xs mono">{{ person.national_id }}</p>
+      </div>
+      <span class="font-black text-lg">{{ person.balance }} <span class="text-xs text-gray-500">دیاز</span></span>
+    </div>
+    {% else %}
+    <p class="text-center text-gray-600 py-8">هنوز هیچ شهروندی ثبت‌نام نکرده است.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

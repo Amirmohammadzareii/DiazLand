@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}جمهوری دیازلند — آخرین پناهگاه آزادی{% endblock %}
+{% block content %}
+<div class="text-center py-16 fade-up">
+  <div class="text-7xl mb-6 float">🇩🇿</div>
+  <h1 class="text-5xl md:text-6xl font-black gold mb-4">جمهوری دیازلند</h1>
+  <p class="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+    آخرین پناهگاه آزادی در اینترنت فارسی.<br>
+    تابعیت بگیر، پاسپورت طلایی‌ات را دریافت کن، هر روز حقوق بگیر و در فروشگاه ملی خرید کن.
+  </p>
+
+  <div class="flex gap-4 justify-center mt-10">
+    <a href="/register" class="btn-gold px-8 py-4 text-lg">درخواست تابعیت</a>
+    <a href="/login" class="btn-ghost px-8 py-4 text-lg">ورود شهروند</a>
+  </div>
+</div>
+
+<!-- ویژگی‌ها -->
+<div class="grid md:grid-cols-3 gap-6 mt-12 fade-up">
+  <div class="card p-6 glow">
+    <div class="text-4xl mb-3">🛂</div>
+    <h3 class="font-bold text-lg gold mb-2">پاسپورت طلایی</h3>
+    <p class="text-gray-400 text-sm">شماره ملی خودکار، پرچم دیزلند و امضای رئیس‌جمهور. آماده استوری.</p>
+  </div>
+  <div class="card p-6 glow">
+    <div class="text-4xl mb-3">💰</div>
+    <h3 class="font-bold text-lg gold mb-2">حقوق روزانه</h3>
+    <p class="text-gray-400 text-sm">هر ۲۴ ساعت ۱۰ دیاز حقوق شهروندی. بدون مالیات، بدون بهانه.</p>
+  </div>
+  <div class="card p-6 glow">
+    <div class="text-4xl mb-3">🏆</div>
+    <h3 class="font-bold text-lg gold mb-2">لیدربورد ملی</h3>
+    <p class="text-gray-400 text-sm">با ۱۰ شهروند ثروتمند کشور رقابت کن و به قله برس.</p>
+  </div>
+</div>
+
+<div class="card p-8 mt-12 text-center fade-up">
+  <p class="text-gray-400 text-sm mb-2">آمار رسمی جمهوری</p>
+  <p class="text-2xl font-bold gold">«آزادی، دیاز، و کمی طنز»</p>
+  <p class="text-gray-600 text-xs mt-2">شعار رسمی دولت — ماده ۱ قانون اساسی دیازلند</p>
+</div>
+{% endblock %}

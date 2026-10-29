@@ -1,0 +1,67 @@
+{# قالب پایه — RTL فارسی، تم تیره دیازلند #}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}جمهوری دیازلند{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+  <style>
+    :root { --gold: #f5c542; --navy: #0b0f19; }
+    * { font-family: 'Vazirmatn', sans-serif; }
+    body { background: var(--navy); color: #e5e7eb; }
+    .gold { color: var(--gold); }
+    .gold-bg { background: var(--gold); }
+    .gold-border { border-color: var(--gold); }
+    .card { background: #111827; border: 1px solid #1f2937; border-radius: 1rem; }
+    .btn-gold {
+      background: linear-gradient(135deg, #f5c542, #d4a017);
+      color: #0b0f19; font-weight: 700; border-radius: 0.75rem;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,197,66,.35); }
+    .btn-ghost { border: 1px solid #374151; border-radius: 0.75rem; transition: all .15s ease; }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .float { animation: float 4s ease-in-out infinite; }
+    @keyframes fadeUp { from { opacity:0; transform: translateY(16px);} to {opacity:1; transform:none;} }
+    .fade-up { animation: fadeUp .6s ease both; }
+    .glow { box-shadow: 0 0 40px rgba(245,197,66,.15); }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- نوار بالا -->
+  <nav class="border-b border-gray-800 bg-[#0b0f19]/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 font-bold text-lg">
+        <span class="text-2xl">🇩🇿</span>
+        <span class="gold">دیازلند</span>
+      </a>
+      <div class="flex items-center gap-3 text-sm">
+        <a href="/leaderboard" class="hover:text-[#f5c542] transition">لیدربورد</a>
+        {% if user %}
+          <a href="/shop" class="hover:text-[#f5c542] transition">فروشگاه</a>
+          <a href="/passport" class="hover:text-[#f5c542] transition">پاسپورت</a>
+          {% if user.is_admin %}<a href="/admin" class="hover:text-[#f5c542] transition">ادمین</a>{% endif %}
+          <span class="text-gray-500">|</span>
+          <span class="gold font-bold">{{ user.display_name }}</span>
+          <a href="/logout" class="btn-ghost px-3 py-1 text-xs">خروج</a>
+        {% else %}
+          <a href="/login" class="btn-ghost px-4 py-1.5">ورود</a>
+          <a href="/register" class="btn-gold px-4 py-1.5">تابعیت</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t border-gray-800 mt-16 py-6 text-center text-gray-600 text-sm">
+    <p>جمهوری دیازلند — آخرین پناهگاه آزادی در اینترنت فارسی 🇩🇿</p>
+    <p class="mt-1 text-xs">© آرت دیاز، رئیس‌جمهور مادام‌العمر</p>
+  </footer>
+</body>
+</html>

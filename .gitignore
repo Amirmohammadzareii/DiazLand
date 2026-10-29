@@ -1,0 +1,20 @@
+# فایل‌های محیطی و رمزها
+.env
+*.env
+!.env.example
+
+# دیتابیس
+*.db
+*.db-shm
+*.db-wal
+
+# پایتون
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# ابزارها
+.pytest_cache/
+.mypy_cache/
