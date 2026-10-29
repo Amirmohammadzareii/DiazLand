@@ -1,0 +1,151 @@
+[
+  {
+    "id": "sardar-1",
+    "title": "سردار کوچک",
+    "year": 1402,
+    "genres": [
+      "کمدی",
+      "خانوادگی"
+    ],
+    "rating": 8.1,
+    "duration": "1:52",
+    "description": "داستان پسری که تصمیم می‌گیرد فرمانده محله شود. ماجراهای خنده‌دار و درس‌های دوستی در دل یک کوچه قدیمی تهران.",
+    "poster": "assets/posters/sardar-1.svg",
+    "telegram_embed": "https://t.me/diazflix/1",
+    "added_at": "2026-10-29"
+  },
+  {
+    "id": "shabgard",
+    "title": "شب‌گرد",
+    "year": 1401,
+    "genres": [
+      "درام",
+      "معمایی"
+    ],
+    "rating": 7.6,
+    "duration": "2:08",
+    "description": "یک کارآگاه خسته در جست‌وجوی حقیقتی که سال‌ها پنهان مانده. شهری که هرگز نمی‌خوابد، رازی که هرگز نمی‌میرد.",
+    "poster": "assets/posters/shabgard.svg",
+    "telegram_embed": "https://t.me/diazflix/2",
+    "added_at": "2026-10-28"
+  },
+  {
+    "id": "khoob-bad-zoosht",
+    "title": "خوب، بد، زشت",
+    "year": 1400,
+    "genres": [
+      "اکشن",
+      "وسترن"
+    ],
+    "rating": 8.9,
+    "duration": "2:41",
+    "description": "سه تفنگدار با سه هدف متفاوت در جست‌وجوی گنجی افسانه‌ای. دوئل نهایی در غروب آفتاب کویر.",
+    "poster": "assets/posters/khoob-bad-zoosht.svg",
+    "telegram_embed": "https://t.me/diazflix/3",
+    "added_at": "2026-10-27"
+  },
+  {
+    "id": "setare-darya",
+    "title": "ستاره‌ی دریا",
+    "year": 1402,
+    "genres": [
+      "عاشقانه",
+      "درام"
+    ],
+    "rating": 7.9,
+    "duration": "1:47",
+    "description": "عشق یک ملوان به دختری از روستای ساحلی. دریا شاهد همه‌چیز است — حتی چیزهایی که فراموش می‌شوند.",
+    "poster": "assets/posters/setare-darya.svg",
+    "telegram_embed": "https://t.me/diazflix/4",
+    "added_at": "2026-10-26"
+  },
+  {
+    "id": "khande-ghazal",
+    "title": "خنده‌ی غزال",
+    "year": 1399,
+    "genres": [
+      "کمدی"
+    ],
+    "rating": 6.8,
+    "duration": "1:35",
+    "description": "یک زن خانه‌دار تصمیم می‌گیرد استندآپ کمدین شود. خانواده فکر می‌کنند شوخی است — تا شب اجرا.",
+    "poster": "assets/posters/khande-ghazal.svg",
+    "telegram_embed": "https://t.me/diazflix/5",
+    "added_at": "2026-10-25"
+  },
+  {
+    "id": "jangal-sorkh",
+    "title": "جنگل سرخ",
+    "year": 1403,
+    "genres": [
+      "ترسناک",
+      "معمایی"
+    ],
+    "rating": 7.2,
+    "duration": "1:58",
+    "description": "گروهی از دانشجویان برای تحقیق به جنگلی می‌روند که هیچ‌کس از آن برنگشته. دوربین‌ها هنوز روشن‌اند.",
+    "poster": "assets/posters/jangal-sorkh.svg",
+    "telegram_embed": "https://t.me/diazflix/6",
+    "added_at": "2026-10-24"
+  },
+  {
+    "id": "parvaz-khakestari",
+    "title": "پرواز خاکستری",
+    "year": 1401,
+    "genres": [
+      "علمی‌تخیلی",
+      "اکشن"
+    ],
+    "rating": 8.4,
+    "duration": "2:15",
+    "description": "خلبانی که تنها بازمانده‌ی یک سانحه هوایی است، درمی‌یابد زمین آن‌طور که فکر می‌کرد نیست.",
+    "poster": "assets/posters/parvaz-khakestari.svg",
+    "telegram_embed": "https://t.me/diazflix/7",
+    "added_at": "2026-10-23"
+  },
+  {
+    "id": "madarbozorg",
+    "title": "مادربزرگ و اینترنت",
+    "year": 1403,
+    "genres": [
+      "کمدی",
+      "خانوادگی"
+    ],
+    "rating": 7.4,
+    "duration": "1:29",
+    "description": "مادربزرگی که برای اولین بار تلفن هوشمند می‌گیرد و دنیای آنلاین را کشف می‌کند — به روش خودش.",
+    "poster": "assets/posters/madarbozorg.svg",
+    "telegram_embed": "https://t.me/diazflix/8",
+    "added_at": "2026-10-22"
+  },
+  {
+    "id": "rah-abi",
+    "title": "راه آبی",
+    "year": 1400,
+    "genres": [
+      "مستند",
+      "درام"
+    ],
+    "rating": 8.0,
+    "duration": "1:44",
+    "description": "مستندی درباره‌ی آخرین قایقران‌های رودخانه‌ای که با مدرنیته می‌جنگند.",
+    "poster": "assets/posters/rah-abi.svg",
+    "telegram_embed": "https://t.me/diazflix/9",
+    "added_at": "2026-10-21"
+  },
+  {
+    "id": "shahr-roya",
+    "title": "شهر رویا",
+    "year": 1399,
+    "genres": [
+      "فانتزی",
+      "درام"
+    ],
+    "rating": 7.7,
+    "duration": "2:02",
+    "description": "دختری که می‌تواند رویاهای دیگران را ببیند، وارد شهری می‌شود که همه در آن گم شده‌اند.",
+    "poster": "assets/posters/shahr-roya.svg",
+    "telegram_embed": "https://t.me/diazflix/10",
+    "added_at": "2026-10-20"
+  }
+]

@@ -3,18 +3,17 @@
 *.env
 !.env.example
 
-# دیتابیس
-*.db
-*.db-shm
-*.db-wal
+# فایل‌های سیستمی
+.DS_Store
+Thumbs.db
 
-# پایتون
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-*.egg-info/
+# ادیتور
+.vscode/
+.idea/
+*.swp
 
-# ابزارها
-.pytest_cache/
-.mypy_cache/
+# Node (برای تست)
+node_modules/
+
+# فایل‌های موقت
+*.log

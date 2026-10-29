@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دیازفلیکس — سینمای آنلاین فارسی</title>
+  <meta name="description" content="دیازفلیکس — سینمای آنلاین فارسی بدون سرور. فیلم‌ها مستقیم از تلگرام پخش می‌شوند.">
+
+  <!-- فونت وزیرمتن -->
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+  <!-- استایل -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+</head>
+<body>
+
+  <!-- هدر چسبان -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="#/" class="logo">دیاز<span class="gold">فلیکس</span></a>
+      <nav class="nav-links">
+        <a href="#/">خانه</a>
+        <a href="#/about">درباره</a>
+      </nav>
+      <div class="search-box">
+        <input id="searchInput" type="search" placeholder="جستجوی فیلم، ژانر، سال…"
+               autocomplete="off" aria-label="جستجو">
+        <span class="icon">🔍</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- محتوای اصلی (SPA) -->
+  <main id="app">
+    <div class="empty-state"><div class="big">🎬</div><p>در حال بارگذاری…</p></div>
+  </main>
+
+  <!-- فوتر -->
+  <footer class="footer">
+    <p><span class="logo-sm">دیازفلیکس</span> — سینمای آنلاین فارسی، بدون سرور 🎬</p>
+    <p style="margin-top:.5rem">پخش ویدیو مستقیم از تلگرام · کاتالوگ در <code>data/movies.json</code></p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
