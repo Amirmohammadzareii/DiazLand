@@ -10,6 +10,7 @@
   <style>
     :root { --gold: #f5c542; --navy: #0b0f19; }
     * { font-family: 'Vazirmatn', sans-serif; }
+    html { scroll-behavior: smooth; }
     body { background: var(--navy); color: #e5e7eb; }
     .gold { color: var(--gold); }
     .gold-bg { background: var(--gold); }
@@ -39,6 +40,7 @@
         <span class="gold">دیازلند</span>
       </a>
       <div class="flex items-center gap-3 text-sm">
+        <a href="/map" class="hover:text-[#f5c542] transition">نقشه</a>
         <a href="/leaderboard" class="hover:text-[#f5c542] transition">لیدربورد</a>
         {% if user %}
           <a href="/shop" class="hover:text-[#f5c542] transition">فروشگاه</a>
@@ -63,5 +65,45 @@
     <p>جمهوری دیازلند — آخرین پناهگاه آزادی در اینترنت فارسی 🇩🇿</p>
     <p class="mt-1 text-xs">© آرت دیاز، رئیس‌جمهور مادام‌العمر</p>
   </footer>
+
+  <!-- کانفتی طلایی مشترک (فاز ۲) — سبک، canvas، حداکثر ۸۰ ذره -->
+  <script>
+  function diazConfetti() {
+    const c = document.createElement('canvas');
+    c.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999';
+    document.body.appendChild(c);
+    const ctx = c.getContext('2d');
+    c.width = innerWidth; c.height = innerHeight;
+    const colors = ['#f5c542','#d4a017','#ffe08a','#ffffff'];
+    const parts = Array.from({length: 80}, () => ({
+      x: Math.random()*c.width, y: -20 - Math.random()*c.height*0.3,
+      vx: (Math.random()-0.5)*3, vy: 2+Math.random()*4,
+      s: 4+Math.random()*6, col: colors[(Math.random()*colors.length)|0],
+      rot: Math.random()*Math.PI, vr: (Math.random()-0.5)*0.2
+    }));
+    let frames = 0;
+    let raf;
+    function draw() {
+      if (document.hidden) { raf = requestAnimationFrame(draw); return; }
+      ctx.clearRect(0,0,c.width,c.height);
+      parts.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.rot += p.vr;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.col; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);
+        ctx.restore();
+      });
+      frames++;
+      if (frames < 120) raf = requestAnimationFrame(draw);
+      else { cancelAnimationFrame(raf); c.remove(); }
+    }
+    draw();
+  }
+  // pause انیمیشن‌ها وقتی تب مخفی است — برای canvas ها
+  document.addEventListener('visibilitychange', () => {
+    document.querySelectorAll('canvas').forEach(cv => {
+      cv.style.animationPlayState = document.hidden ? 'paused' : 'running';
+    });
+  });
+  </script>
 </body>
 </html>

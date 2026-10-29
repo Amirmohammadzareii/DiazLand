@@ -5,6 +5,7 @@
 """
 
 import os
+import hashlib
 from datetime import datetime, timedelta, timezone
 
 from fastapi import FastAPI, Form, Request, Depends
@@ -59,7 +60,10 @@ def render(request: Request, template: str, **ctx):
 # ---------- صفحه اصلی ----------
 @app.get("/", response_class=HTMLResponse)
 def landing(request: Request):
-    return render(request, "landing.html")
+    conn = db.get_conn()
+    citizen_count = conn.execute("SELECT COUNT(*) AS c FROM users").fetchone()["c"]
+    conn.close()
+    return render(request, "landing.html", citizen_count=citizen_count)
 
 
 # ---------- ثبت‌نام ----------
@@ -165,6 +169,10 @@ def passport(request: Request):
            WHERE p.user_id = ? ORDER BY p.created_at DESC""",
         (user["id"],),
     ).fetchall()
+    my_lands = conn.execute(
+        "SELECT * FROM lands WHERE owner_id = ? ORDER BY purchased_at DESC",
+        (user["id"],),
+    ).fetchall()
     conn.close()
 
     can_salary, next_salary = _salary_status(user)
@@ -173,6 +181,7 @@ def passport(request: Request):
         request,
         "passport.html",
         purchases=purchases,
+        my_lands=my_lands,
         can_salary=can_salary,
         next_salary=next_salary,
         passport_created=user["created_at"],
@@ -273,6 +282,140 @@ def leaderboard(request: Request):
     ).fetchall()
     conn.close()
     return render(request, "leaderboard.html", top=top)
+
+
+# ---------- نقشه کشور (فاز ۲) ----------
+def _user_color(username: str) -> str:
+    """رنگ اختصاصی هر کاربر از هش نام کاربری (HSL پایدار)."""
+    h = int(hashlib.md5((username or "?").encode("utf-8")).hexdigest()[:8], 16)
+    hue = h % 360
+    return f"hsl({hue}, 65%, 55%)"
+
+
+@app.get("/map", response_class=HTMLResponse)
+def map_page(request: Request):
+    user = current_user(request)
+    conn = db.get_conn()
+    lands = conn.execute(
+        """SELECT l.*, u.username AS owner_username, u.display_name AS owner_name
+           FROM lands l LEFT JOIN users u ON u.id = l.owner_id"""
+    ).fetchall()
+    citizen_count = conn.execute("SELECT COUNT(*) AS c FROM users").fetchone()["c"]
+    conn.close()
+
+    # ساخت لیست قطعات برای رندر
+    grid = []
+    for l in lands:
+        grid.append(
+            {
+                "x": l["x"],
+                "y": l["y"],
+                "price": l["price"],
+                "owner_name": l["owner_name"],
+                "owner_username": l["owner_username"],
+                "color": _user_color(l["owner_username"]) if l["owner_username"] else None,
+                "mine": bool(user and l["owner_id"] == user["id"]),
+                "building": l["building"],
+            }
+        )
+
+    return render(
+        request,
+        "map.html",
+        grid=grid,
+        grid_size=db.GRID_SIZE,
+        citizen_count=citizen_count,
+        user_color=_user_color(user["username"]) if user else None,
+    )
+
+
+@app.post("/map/buy")
+def map_buy(request: Request, x: int = Form(...), y: int = Form(...)):
+    """خرید یک قطعه خالی روی نقشه."""
+    user = require_user(request)
+    if not user:
+        return RedirectResponse("/login", status_code=302)
+
+    conn = db.get_conn()
+    land = conn.execute("SELECT * FROM lands WHERE x = ? AND y = ?", (x, y)).fetchone()
+    if not land or land["owner_id"] is not None:
+        conn.close()
+        return RedirectResponse("/map?msg=taken", status_code=302)
+
+    fresh = conn.execute("SELECT balance FROM users WHERE id = ?", (user["id"],)).fetchone()
+    if fresh["balance"] < land["price"]:
+        conn.close()
+        return RedirectResponse("/map?msg=poor", status_code=302)
+
+    conn.execute("UPDATE users SET balance = balance - ? WHERE id = ?", (land["price"], user["id"]))
+    conn.execute(
+        "UPDATE lands SET owner_id = ?, purchased_at = ? WHERE x = ? AND y = ?",
+        (user["id"], db.now_iso(), x, y),
+    )
+    conn.commit()
+    conn.close()
+    return RedirectResponse(f"/map?msg=bought&x={x}&y={y}", status_code=302)
+
+
+@app.get("/land/{x}/{y}", response_class=HTMLResponse)
+def land_detail(request: Request, x: int, y: int):
+    """صفحه اختصاصی یک قطعه زمین."""
+    user = current_user(request)
+    conn = db.get_conn()
+    land = conn.execute(
+        """SELECT l.*, u.username AS owner_username, u.display_name AS owner_name
+           FROM lands l LEFT JOIN users u ON u.id = l.owner_id
+           WHERE l.x = ? AND l.y = ?""",
+        (x, y),
+    ).fetchone()
+    conn.close()
+
+    if not land:
+        return RedirectResponse("/map", status_code=302)
+
+    is_mine = bool(user and land["owner_id"] == user["id"])
+    return render(request, "land.html", land=land, is_mine=is_mine, x=x, y=y)
+
+
+@app.post("/land/{x}/{y}/update")
+def land_update(
+    request: Request,
+    x: int,
+    y: int,
+    building: str = Form(""),
+    message: str = Form(""),
+):
+    """ویرایش بنا و پیام ملک — فقط توسط صاحب ملک."""
+    user = require_user(request)
+    if not user:
+        return RedirectResponse("/login", status_code=302)
+
+    conn = db.get_conn()
+    land = conn.execute("SELECT * FROM lands WHERE x = ? AND y = ?", (x, y)).fetchone()
+    if not land or land["owner_id"] != user["id"]:
+        conn.close()
+        return RedirectResponse("/map", status_code=302)
+
+    building = building.strip()[:40]
+    message = message.strip()[:100]  # حداکثر ۱۰۰ حرف طبق تسک
+    conn.execute(
+        "UPDATE lands SET building = ?, message = ? WHERE x = ? AND y = ?",
+        (building or None, message or None, x, y),
+    )
+    conn.commit()
+    conn.close()
+    return RedirectResponse(f"/land/{x}/{y}?msg=saved", status_code=302)
+
+
+# ---------- شمارنده زنده شهروندان (API) ----------
+@app.get("/api/stats")
+def api_stats():
+    """آمار زنده برای لندینگ (شمارنده شهروندان)."""
+    conn = db.get_conn()
+    citizens = conn.execute("SELECT COUNT(*) AS c FROM users").fetchone()["c"]
+    lands_owned = conn.execute("SELECT COUNT(*) AS c FROM lands WHERE owner_id IS NOT NULL").fetchone()["c"]
+    conn.close()
+    return {"citizens": citizens, "lands_owned": lands_owned}
 
 
 # ---------- پنل ادمین ----------

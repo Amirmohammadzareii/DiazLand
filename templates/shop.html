@@ -2,8 +2,29 @@
 {% block title %}فروشگاه ملی — دیازلند{% endblock %}
 {% block content %}
 
+<style>
+  .shop-item {
+    transition: transform .25s cubic-bezier(.2,.9,.3,1), box-shadow .25s ease, border-color .2s;
+  }
+  .shop-item:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,.5), 0 0 30px rgba(245,197,66,.15);
+    border-color: #f5c542;
+  }
+  .price-tag { color: #f5c542; font-weight: 900; font-size: 1.5rem; }
+  /* tooltip فقیر */
+  .poor-btn { position: relative; }
+  .poor-btn .tip {
+    position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%) scale(.9);
+    background: #0b0f19; border: 1px solid #ef4444; color: #fca5a5;
+    padding: 4px 10px; border-radius: 8px; font-size: .75rem; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: all .2s ease;
+  }
+  .poor-btn:hover .tip { opacity: 1; transform: translateX(-50%) scale(1); }
+</style>
+
 <div class="fade-up">
-  <div class="flex items-center justify-between mb-6">
+  <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
     <div>
       <h1 class="text-3xl font-black gold">🏪 فروشگاه ملی دیازلند</h1>
       <p class="text-gray-500 text-sm mt-1">کالاهای رسمی دولت — با دیاز بخر</p>
@@ -26,20 +47,22 @@
 
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
     {% for item in items %}
-    <div class="card p-5 flex flex-col glow hover:border-[#f5c542] transition">
+    <div class="card shop-item p-5 flex flex-col">
       <div class="text-4xl mb-3">{{ item.emoji }}</div>
       <h3 class="font-bold text-lg mb-1">{{ item.name }}</h3>
       <p class="text-gray-400 text-sm flex-1 mb-4">{{ item.description }}</p>
       <div class="flex items-center justify-between">
-        <span class="gold font-black text-xl">{{ item.price }} <span class="text-xs">دیاز</span></span>
+        <span class="price-tag">{{ item.price }} <span class="text-xs">دیاز</span></span>
         {% if item.id in owned %}
           <span class="text-green-400 text-sm font-bold">✓ خریداری شده</span>
+        {% elif user.balance < item.price %}
+          <span class="poor-btn">
+            <button type="button" disabled class="px-5 py-2 text-sm rounded-xl bg-gray-800 text-gray-500 cursor-not-allowed">خرید</button>
+            <span class="tip">تو فقییرت! 💸 برو حقوق بگیر</span>
+          </span>
         {% else %}
           <form method="post" action="/buy/{{ item.id }}">
-            <button type="submit" class="btn-gold px-5 py-2 text-sm"
-                    {% if user.balance < item.price %}disabled style="opacity:.4;cursor:not-allowed"{% endif %}>
-              خرید
-            </button>
+            <button type="submit" class="btn-gold px-5 py-2 text-sm">خرید</button>
           </form>
         {% endif %}
       </div>
@@ -47,4 +70,10 @@
     {% endfor %}
   </div>
 </div>
+
+<script>
+{% if request.query_params.get('msg') == 'bought' %}
+diazConfetti();
+{% endif %}
+</script>
 {% endblock %}

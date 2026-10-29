@@ -54,6 +54,24 @@ def init_db():
         """
     )
 
+    # جدول قطعات زمین نقشه (فاز ۲) — گرید ۱۶×۱۶ = ۲۵۶ قطعه
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS lands (
+            id           INTEGER PRIMARY KEY AUTOINCREMENT,
+            owner_id     INTEGER,
+            x            INTEGER NOT NULL,
+            y            INTEGER NOT NULL,
+            price        INTEGER NOT NULL,
+            building     TEXT,
+            message      TEXT,
+            purchased_at TEXT,
+            UNIQUE (x, y),
+            FOREIGN KEY (owner_id) REFERENCES users(id)
+        )
+        """
+    )
+
     # جدول آیتم‌های فروشگاه
     cur.execute(
         """
@@ -103,6 +121,9 @@ def init_db():
     # مقدار اولیه شمارنده شماره ملی
     cur.execute("INSERT OR IGNORE INTO meta (key, value) VALUES ('national_counter', '0')")
 
+    # seed قطعات نقشه (فاز ۲)
+    seed_lands(conn)
+
     conn.commit()
     conn.close()
 
@@ -115,6 +136,38 @@ def next_national_id(conn):
     counter = int(row["value"]) + 1
     cur.execute("UPDATE meta SET value = ? WHERE key = 'national_counter'", (str(counter),))
     return f"DZ-{counter:06d}"
+
+
+# ---------- نقشه کشور (فاز ۲) ----------
+GRID_SIZE = 16          # گرید ۱۶×۱۶
+CENTER = (GRID_SIZE - 1) / 2  # مرکز = ۷.۵
+# حداکثر فاصله از مرکز (گوشه‌ها)
+MAX_DIST = (CENTER ** 2 + CENTER ** 2) ** 0.5
+
+
+def land_price(x: int, y: int) -> int:
+    """
+    قیمت قطعه: مرکز گران‌ترین (≈۵۰۰۰ دیاز)، حاشیه ارزان‌ترین (≈۲۰۰ دیاز).
+    فرمول تسک: price = round(200 * 1.18^distance) — که در آن distance
+    از لبه حساب می‌شود (هرچه به مرکز نزدیک‌تر، distance بیشتر).
+    """
+    dist_from_center = ((x - CENTER) ** 2 + (y - CENTER) ** 2) ** 0.5
+    # معکوس: نزدیک مرکز → عدد بزرگ‌تر
+    effective = MAX_DIST - dist_from_center
+    return int(round(200 * (1.18 ** effective)))
+
+
+def seed_lands(conn):
+    """ساخت ۲۵۶ قطعه خالی در صورت نبودن (مهاجرت اولیه نقشه)."""
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) AS c FROM lands")
+    if cur.fetchone()["c"] > 0:
+        return
+    rows = []
+    for x in range(GRID_SIZE):
+        for y in range(GRID_SIZE):
+            rows.append((x, y, land_price(x, y)))
+    cur.executemany("INSERT INTO lands (x, y, price) VALUES (?, ?, ?)", rows)
 
 
 def now_iso():

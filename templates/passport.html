@@ -18,52 +18,52 @@
 
 <div class="grid md:grid-cols-2 gap-8 fade-up">
 
-  <!-- ===== کارت پاسپورت ===== -->
+  <!-- ===== کارت پاسپورت (three-tilt) ===== -->
   <div>
     <h2 class="text-xl font-bold gold mb-4">🛂 پاسپورت شهروندی</h2>
 
-    <!-- کارت با ابعاد استاندارد کارت بانکی (نسبت ۸۵.۶ × ۵۳.۹۸) -->
-    <div class="passport-card">
-      <!-- پرچم دیزلند: مثلث طلایی روی سرمه‌ای -->
-      <div class="flag">
-        <div class="triangle"></div>
-      </div>
-
-      <div class="passport-body">
-        <div class="passport-header">
-          <span class="passport-country">جمهوری دیازلند</span>
-          <span class="passport-type">پاسپورت شهروندی</span>
+    <div class="tilt-scene">
+      <div class="passport-card" id="passportCard">
+        <div class="flag">
+          <div class="triangle"></div>
         </div>
-
-        <div class="passport-main">
-          <div class="passport-photo">🇩🇿</div>
-          <div class="passport-info">
-            <div class="passport-row">
-              <span class="label">نام</span>
-              <span class="value">{{ user.display_name }}</span>
-            </div>
-            <div class="passport-row">
-              <span class="label">شماره ملی</span>
-              <span class="value mono">{{ user.national_id }}</span>
-            </div>
-            <div class="passport-row">
-              <span class="label">تاریخ تابعیت</span>
-              <span class="value mono">{{ passport_created[:10] }}</span>
+        <div class="passport-body">
+          <div class="passport-header">
+            <span class="passport-country">جمهوری دیازلند</span>
+            <span class="passport-type">پاسپورت شهروندی</span>
+          </div>
+          <div class="passport-main">
+            <div class="passport-photo">🇩🇿</div>
+            <div class="passport-info">
+              <div class="passport-row">
+                <span class="label">نام</span>
+                <span class="value">{{ user.display_name }}</span>
+              </div>
+              <div class="passport-row">
+                <span class="label">شماره ملی</span>
+                <span class="value mono">{{ user.national_id }}</span>
+              </div>
+              <div class="passport-row">
+                <span class="label">تاریخ تابعیت</span>
+                <span class="value mono">{{ passport_created[:10] }}</span>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="passport-footer">
-          <div class="signature">
-            <span class="sig-name">آرت دیاز</span>
-            <span class="sig-title">رئیس‌جمهور مادام‌العمر</span>
+          <div class="passport-footer">
+            <div class="signature">
+              <span class="sig-name">آرت دیاز</span>
+              <span class="sig-title">رئیس‌جمهور مادام‌العمر</span>
+            </div>
+            <div class="passport-seal">DZ</div>
           </div>
-          <div class="passport-seal">DZ</div>
         </div>
       </div>
     </div>
 
-    <p class="text-gray-600 text-xs mt-3 text-center">این پاسپورت رسمی جمهوری دیازلند است — قابل استفاده در استوری 📸</p>
+    <div class="flex gap-3 mt-4">
+      <button onclick="downloadPassport()" class="btn-gold flex-1 py-3 text-sm">📸 دانلود پاسپورت (PNG)</button>
+    </div>
+    <p class="text-gray-600 text-xs mt-3 text-center">با موس یا لمس بچرخان — آماده استوری 📸</p>
   </div>
 
   <!-- ===== موجودی و حقوق ===== -->
@@ -72,7 +72,7 @@
       <p class="text-gray-400 text-sm mb-1">موجودی دیاز</p>
       <p class="text-4xl font-black gold">{{ user.balance }} <span class="text-lg">دیاز</span></p>
 
-      <form method="post" action="/salary" class="mt-4">
+      <form method="post" action="/salary" class="mt-4" id="salaryForm">
         {% if can_salary %}
         <button type="submit" class="btn-gold w-full py-3">💰 دریافت حقوق روزانه (۱۰ دیاز)</button>
         {% else %}
@@ -82,6 +82,29 @@
         </button>
         {% endif %}
       </form>
+    </div>
+
+    <!-- ملک من (فاز ۲) -->
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold gold">🏗️ ملک‌های من</h3>
+        <a href="/map" class="text-xs text-gray-500 hover:text-[#f5c542]">نقشه کشور →</a>
+      </div>
+      {% if my_lands %}
+        <ul class="space-y-2">
+          {% for l in my_lands %}
+          <li class="flex items-center justify-between bg-[#0b0f19] rounded-lg px-3 py-2 text-sm">
+            <a href="/land/{{ l.x }}/{{ l.y }}" class="hover:text-[#f5c542] transition">
+              {% if l.building == 'قصر' %}🏰{% elif l.building == 'خانه' %}🏠{% elif l.building == 'باغ' %}🌳{% elif l.building == 'فواره' %}⛲{% elif l.building == 'مغازه' %}🏪{% else %}🏗️{% endif %}
+              قطعه ({{ l.x }}, {{ l.y }}){% if l.building %} — {{ l.building }}{% endif %}
+            </a>
+            <span class="text-gray-500 text-xs">{{ l.price }} دیاز</span>
+          </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-600 text-sm">هنوز زمینی نداری. برو به <a href="/map" class="gold hover:underline">نقشه کشور</a> و یکی بخر!</p>
+      {% endif %}
     </div>
 
     <!-- دارایی‌ها -->
@@ -104,7 +127,8 @@
 </div>
 
 <style>
-  /* ===== استایل کارت پاسپورت ===== */
+  /* ===== صحنه three-tilt ===== */
+  .tilt-scene { perspective: 1000px; }
   .passport-card {
     width: 100%;
     max-width: 420px;
@@ -118,8 +142,10 @@
     display: flex;
     flex-direction: column;
     margin: 0 auto;
+    transition: transform .1s ease-out;
+    transform-style: preserve-3d;
+    will-change: transform;
   }
-  /* درخشش طلایی گوشه */
   .passport-card::after {
     content: '';
     position: absolute;
@@ -128,7 +154,6 @@
     background: radial-gradient(circle, rgba(245,197,66,.12) 0%, transparent 70%);
     pointer-events: none;
   }
-  /* پرچم دیزلند: مثلث طلایی روی سرمه‌ای */
   .flag {
     height: 34%;
     background: #0b1d3a;
@@ -141,7 +166,6 @@
     right: 0; top: 0;
     width: 0; height: 0;
     border-right: 120px solid #f5c542;
-    border-top: 0 solid transparent;
     border-bottom: 70px solid transparent;
     filter: drop-shadow(0 0 8px rgba(245,197,66,.5));
   }
@@ -199,4 +223,44 @@
     opacity: .8;
   }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// ===== three-tilt =====
+(function() {
+  const card = document.getElementById('passportCard');
+  const scene = card.parentElement;
+  function tilt(px, py) {
+    const r = scene.getBoundingClientRect();
+    const x = (px - r.left) / r.width - 0.5;
+    const y = (py - r.top) / r.height - 0.5;
+    card.style.transform = `rotateY(${x * 18}deg) rotateX(${-y * 18}deg)`;
+  }
+  scene.addEventListener('mousemove', e => tilt(e.clientX, e.clientY));
+  scene.addEventListener('mouseleave', () => { card.style.transform = ''; });
+  scene.addEventListener('touchmove', e => {
+    if (e.touches[0]) tilt(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive: true});
+  scene.addEventListener('touchend', () => { card.style.transform = ''; });
+})();
+
+// ===== دانلود پاسپورت PNG =====
+function downloadPassport() {
+  const card = document.getElementById('passportCard');
+  const oldT = card.style.transform;
+  card.style.transform = '';  // بدون tilt برای عکس صاف
+  html2canvas(card, {backgroundColor: '#0b0f19', scale: 3, useCORS: true}).then(canvas => {
+    const a = document.createElement('a');
+    a.download = 'diazland-passport-{{ user.national_id }}.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+    card.style.transform = oldT;
+  });
+}
+
+// ===== کانفتی بعد از حقوق =====
+{% if request.query_params.get('msg') == 'salary' %}
+diazConfetti();
+{% endif %}
+</script>
 {% endblock %}
